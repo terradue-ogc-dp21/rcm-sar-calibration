@@ -33,7 +33,7 @@ $graph:
     - id: wf_outputs
       outputSource:
         - node_rcm/outputs
-      type: File[]
+      type: Directory[]
 
   steps:
 
@@ -78,8 +78,8 @@ $graph:
   outputs:
     - id: outputs
       outputSource:
-        - node_snap_2/calibrated
-      type: File
+        - node_stage_out/staged
+      type: Directory
 
   steps:
 
@@ -175,22 +175,37 @@ $graph:
 
       run: "#snap-graph3"
 
-    # node_stage_out:
+    node_stac:
 
-    #   in:
-    
-    #     sink_access_key_id: sink-access-key-id
-    #     sink_secret_access_key: sink-secret-access-key
-    #     sink_service_url: sink-service-url
-    #     sink_path: sink-path
-    #     sink_region: sink-region
-    #     harvested: 
-    #       source: [node_harvest/harvested]
+      in:
+        harvested: 
+          source: [node_harvest/harvested]
+        calibrated:
+          source: [node_snap_2/calibrated]
+        overview:
+          source: [node_snap_3/overview]
 
-    #   out:
-    #   - staged
+      out: 
+      - stac
+
+      run: "#stac-ify"
+
+    node_stage_out:
+
+      in:
     
-    #   run: "#stage-out"
+        sink_access_key_id: sink-access-key-id
+        sink_secret_access_key: sink-secret-access-key
+        sink_service_url: sink-service-url
+        sink_path: sink-path
+        sink_region: sink-region
+        stac: 
+          source: [node_stac/stac]
+
+      out:
+      - staged
+    
+      run: "#stage-out"
 
 
 - class: CommandLineTool
@@ -452,6 +467,47 @@ $graph:
         glob: overview.tif
       type: File
 
+
+- class: CommandLineTool 
+
+  id: stac-ify
+
+  requirements:
+    EnvVarRequirement:
+      envDef:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    ResourceRequirement: {}    
+    InlineJavascriptRequirement: {}
+    DockerRequirement:
+      dockerPull: stac-ify
+
+  baseCommand: stac-ify
+  
+  arguments: []
+
+  inputs:
+    harvested: 
+      inputBinding:
+        position: 1
+      type: Directory
+    calibrated:
+      inputBinding:
+        position: 2
+      type: File
+    overview:
+      inputBinding:
+        position: 3
+      type: File
+
+  outputs:
+  
+    stac:
+      outputBinding:
+        glob: .
+      type: Directory
+
+
+
 - class: CommandLineTool
 
   doc: Stage-out harvested acquistions
@@ -482,7 +538,7 @@ $graph:
         position: 5
         prefix: -o
       type: string?
-    harvested:
+    stac:
       inputBinding:
         position: 6
       type: Directory
