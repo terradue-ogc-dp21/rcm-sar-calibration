@@ -1,0 +1,9 @@
+rcm:
+  - class: Directory
+    path: RCM1_OK1721243_PK1721268_4_5M9_20200425_001248_HH_HV_GRD
+
+sink-access-key-id: SCWQNZ0YNRH7XGT4YB3W
+sink-secret-access-key: 657bc929-2e24-4830-95fd-80b04e6bd240
+sink-service-url: https://ogc-dp21.s3.fr-par.scw.cloud
+sink-region: fr-par
+sink-path: s3://ogc-dp21/RCM

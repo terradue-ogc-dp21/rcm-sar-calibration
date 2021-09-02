@@ -1,0 +1,13 @@
+name: env_graph_factory
+channels:
+  - terradue
+  - conda-forge
+dependencies:
+  - python
+  - click2cwl
+  - snapista
+  - pip
+  - numpy
+  - pip:
+      - pystac==1.0.0-beta.3
+      
