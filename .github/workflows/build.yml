@@ -48,9 +48,9 @@ jobs:
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: build & push raw image
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/raw
-          docker build src/raw --tag raw
-          docker tag raw $IMAGE_ID:${{needs.version.outputs.app-version}}
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/raw2
+          docker build src/raw --tag raw2
+          docker tag raw2 $IMAGE_ID:${{needs.version.outputs.app-version}}
           docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
 
   container-graph-factory:
@@ -117,7 +117,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: yq -i eval '(.$graph[] | select (.id == "raw") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/terradue-ogc-dp21/rcm-sar-calibration/raw:${{needs.version.outputs.app-version}}"' rcm-calibrate.cwl 
+      - run: yq -i eval '(.$graph[] | select (.id == "raw") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/terradue-ogc-dp21/rcm-sar-calibration/raw2:${{needs.version.outputs.app-version}}"' rcm-calibrate.cwl 
       - run: yq -i eval '(.$graph[] | select (.id == "graph-factory") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/terradue-ogc-dp21/rcm-sar-calibration/graph-factory:${{needs.version.outputs.app-version}}"' rcm-calibrate.cwl 
       - run: yq -i eval '(.$graph[] | select (.id == "snap-gpt") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/terradue-ogc-dp21/rcm-sar-calibration/snap-gpt:${{needs.version.outputs.app-version}}"' rcm-calibrate.cwl 
       - run: yq -i eval '(.$graph[] | select (.id == "stac-ify") ).requirements.DockerRequirement.dockerPull = "docker.pkg.github.com/terradue-ogc-dp21/rcm-sar-calibration/stac-ify:${{needs.version.outputs.app-version}}"' rcm-calibrate.cwl 
