@@ -107,6 +107,7 @@ jobs:
   publish:
 
     needs: 
+      - container-raw
       - container-graph-factory
       - container-snap-gpt
       - container-stac-ify
