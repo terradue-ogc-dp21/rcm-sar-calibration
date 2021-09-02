@@ -1,0 +1,53 @@
+#!/bin/bash
+
+prd=$1
+
+prd_metadata=$( unzip -l ${prd} | grep  product.xml | tr -s " " | cut -d " " -f 5 )
+
+min_lon=$( unzip -p ${prd} ${prd_metadata} | xmllint \
+    --nowarning \
+    --xpath "(//*[local-name()='longitude'])/text()" - | jq -s min )
+
+max_lon=$( unzip -p ${prd} ${prd_metadata} | xmllint \
+    --nowarning \
+    --xpath "(//*[local-name()='longitude'])/text()" - | jq -s max )
+
+min_lat=$( unzip -p ${prd} ${prd_metadata} | xmllint \
+    --nowarning \
+    --xpath "(//*[local-name()='latitude'])/text()" - | jq -s min )
+
+max_lat=$( unzip -p ${prd} ${prd_metadata} | xmllint \
+    --nowarning \
+    --xpath "(//*[local-name()='latitude'])/text()" - | jq -s max )
+
+bbox="${min_lon},${min_lat},${max_lon},${max_lat}"
+
+datetime=$( unzip -p ${prd} ${prd_metadata} | xmllint --nowarning --xpath "(//*[local-name()='rawDataStartTime'])[1]/text()" - )
+
+mode=$( unzip -p ${prd} ${prd_metadata} | xmllint \
+    --nowarning \
+    --xpath "(//*[local-name()='beamMode'])/text()" - )
+
+case $mode in
+
+  "High Resolution 5m")
+    gsd=5
+    ;;
+esac
+
+source /functions.sh
+
+item=$( basename ${prd} | sed 's/\.zip/\.json/' )
+
+# initialise a STAC item
+init_item \
+    $( echo $item | sed 's/\.json//' ) \
+    ${datetime} \
+    "${bbox}" \
+    "${gsd}" > ${item}
+
+# add an asset
+add_asset ${item} "download" $( basename ${prd}) "application/zip" "RCM acquisition" "data"
+
+cp ${prd} .
+
