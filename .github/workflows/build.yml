@@ -31,7 +31,7 @@ jobs:
           VERSION: v4.2.0
           BINARY: yq_linux_amd64
       - run: chmod +x /usr/bin/yq
-      - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' rarcmw-calibrate.cwl | tr -d "\n" )" >> $GITHUB_ENV
+      - run: echo "APP_VERSION=$( yq e '."s:softwareVersion"' rcm-calibrate.cwl | tr -d "\n" )" >> $GITHUB_ENV
       - run: echo app version is $APP_VERSION
       - id: set-version
         run: echo "::set-output name=version::$APP_VERSION"
