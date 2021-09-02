@@ -67,7 +67,7 @@ jobs:
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/graph-factory
           docker build src/graph-factory --tag graph-factory
-          docker tag raw $IMAGE_ID:${{needs.version.outputs.app-version}}
+          docker tag graph-factory $IMAGE_ID:${{needs.version.outputs.app-version}}
           docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
   
   container-snap-gpt:
@@ -84,7 +84,7 @@ jobs:
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/snap-gpt
           docker build src/snap-gpt --tag snap-gpt
-          docker tag raw $IMAGE_ID:${{needs.version.outputs.app-version}}
+          docker tag snap-gpt $IMAGE_ID:${{needs.version.outputs.app-version}}
           docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
 
   container-stac-ify:
@@ -101,7 +101,7 @@ jobs:
         run: |
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/stac-ify
           docker build src/stac-ify --tag stac-ify
-          docker tag raw $IMAGE_ID:${{needs.version.outputs.app-version}}
+          docker tag stac-ify $IMAGE_ID:${{needs.version.outputs.app-version}}
           docker push $IMAGE_ID:${{needs.version.outputs.app-version}}
 
   publish:
