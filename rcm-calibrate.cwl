@@ -33,7 +33,11 @@ $graph:
     - id: wf_outputs
       outputSource:
         - node_rcm/outputs
-      type: Directory[]
+      type: Any
+    - id: reference
+      outputSource:
+        - node_rcm/catalog
+      type: string[]
 
   steps:
 
@@ -52,6 +56,7 @@ $graph:
       
       out:
       - outputs
+      - catalog
         
       scatter: rcm
       scatterMethod: dotproduct 
@@ -80,6 +85,10 @@ $graph:
       outputSource:
         - node_stage_out/staged
       type: Directory
+    - id: catalog
+      outputSource:
+        - node_stage_out/catalog
+      type: string
 
   steps:
 
@@ -204,6 +213,7 @@ $graph:
 
       out:
       - staged
+      - catalog
     
       run: "#stage-out"
 
@@ -518,10 +528,10 @@ $graph:
 
   arguments:
   - copy
-  - -rel
   - -v
   - -r
   - '4'
+  - -aa  
 
   inputs:
 
@@ -548,7 +558,14 @@ $graph:
       outputBinding:
         glob: .
       type: Directory
-    
+    catalog: 
+      type: string
+      outputBinding:
+        outputEval: $( inputs.sink_path + "/catalog.json" )
+
+  stdout: stdout
+  stderr: stderr
+   
   requirements:
     EnvVarRequirement:
       envDef:
@@ -561,7 +578,9 @@ $graph:
         PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     ResourceRequirement: {}
     DockerRequirement:
-      dockerPull: terradue/stars-t2:latest
+      dockerPull: terradue/stars:latest
+    InlineJavascriptRequirement: {}
+
 cwlVersion: v1.0
 
 $namespaces:
