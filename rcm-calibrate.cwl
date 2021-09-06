@@ -561,7 +561,7 @@ $graph:
     catalog: 
       type: string
       outputBinding:
-        outputEval: $( inputs.sink_path + "/catalog.json" )
+        outputEval: ${ if(inputs.sink_path === null) { return "null"; } else { return inputs.sink_path + "/catalog.json";} }
 
   stdout: stdout
   stderr: stderr
